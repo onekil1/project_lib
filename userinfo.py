@@ -40,6 +40,11 @@ def profile_info():
             if st.button("Корректировка проекта"):
                 st.sidebar.write("В разработке")
 
+def local_css():
+    file = r"C:\Users\onekil1\Coding\project_lib\styles.css"
+    with open(file) as f:
+        css = f"<style>{f.read()}</style>"
+        st.markdown(css, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     print("1")

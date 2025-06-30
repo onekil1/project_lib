@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 import streamlit_authenticator as sauth
 
-from userinfo import profile_info
+from userinfo import profile_info,local_css
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
 
@@ -31,7 +31,8 @@ def project_list():
     cursor = db.cursor()
     cursor.execute("PRAGMA table_info(project)")
     columns = [column[1] for column in cursor.fetchall()]
-    cursor.execute("SELECT id, status, project_name, project_simple_desk, list_stat FROM project WHERE list_stat = ?", ("Согласован",))
+    cursor.execute("SELECT id, status, project_name, project_simple_desk, list_stat, "
+                   "tags FROM project WHERE list_stat = ?", ("Согласован",))
     rows = cursor.fetchall()
     st.write("### Список проектов")
     if rows == []:
@@ -44,13 +45,17 @@ def project_list():
         columns[1], columns[2], columns[3] = columns[2],columns[3], columns[1]
         df = df[columns]
         for i, row in df.iterrows():
-            col1, col2 = st.columns([6, 1])
+            col1, col2, col3 = st.columns([6, 2, 1])
             with col1:
                 st.markdown(
                     f"**{row[columns[0]]}** — {row[columns[1]]}<br><span style='color:gray'>{row[columns[2]]}</span>",
                     unsafe_allow_html=True
                 )
             with col2:
+                splt = row[columns[5]].split(",")
+                for tag in splt:
+                    st.markdown(f"- {tag}")
+            with col3:
                 if st.button(f"Подробнее", key=f"btn_{row['id']}"):
                     st.query_params = row['id']
                     st.switch_page("pages/4_project_page.py")
@@ -76,4 +81,5 @@ def interface():
         project_list()
         authenticator.logout(button_name="Выйти", location="sidebar")
 
+local_css()
 interface()

@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 import streamlit_authenticator as sauth
 
-from userinfo import profile_info
+from userinfo import profile_info,local_css
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
 # -- Загрузка пользователей + кеширование
@@ -65,7 +65,8 @@ def delete_list():
             with col3:
                 if st.button(f"Удалить проект",key=f"dlt_btn_{row['id']}"):
                     selected_id = row['id']
-                    _delete_project(selected_id)
+                    result = _delete_project(selected_id)
+                    st.sidebar.success(result)
 # -- Основная логика страницы
 def interface():
     st.set_page_config(page_title="Удаление проектов из базы знаний", layout="wide")
@@ -91,4 +92,5 @@ def interface():
         delete_list()
         authenticator.logout(button_name="Выйти", location="sidebar")
 
+local_css()
 interface()

@@ -3,7 +3,7 @@ import sqlite3
 import streamlit as st
 import streamlit_authenticator as sauth
 
-from userinfo import profile_info
+from userinfo import profile_info,local_css
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
 # -- Загрузка пользователей + кеширование
@@ -58,7 +58,7 @@ def project_info():
     if not info_about:
         st.write("Список согласования пуст!")
     else:
-        st.title(f"Информация о проекте № {select_id}")
+        st.write(f"### Информация о проекте № {select_id}")
         st.write (info_about)
         st.download_button(
             label="Скачать паспорт проекта",
@@ -95,4 +95,5 @@ def interface():
         profile_info()
         authenticator.logout(button_name="Выйти", location="sidebar")
 
+local_css()
 interface()

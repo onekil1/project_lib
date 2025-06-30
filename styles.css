@@ -1,0 +1,3 @@
+/* Уменьшаем или убираем верхний отступ основного контейнера */
+.block-container {
+    padding-top: 1.5rem !important; }

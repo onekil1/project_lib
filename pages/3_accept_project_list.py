@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 import streamlit_authenticator as sauth
 
-from userinfo import profile_info
+from userinfo import profile_info,local_css
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
 # -- Загрузка пользователей + кеширование
@@ -80,4 +80,5 @@ def interface():
         accept_list()
         authenticator.logout(button_name="Выйти", location="sidebar")
 
+local_css()
 interface()
