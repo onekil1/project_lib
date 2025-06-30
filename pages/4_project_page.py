@@ -6,7 +6,7 @@ import streamlit_authenticator as sauth
 from userinfo import profile_info
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
-
+# -- Загрузка пользователей + кеширование
 @st.cache_data
 def _load_credentials():
     with sqlite3.connect(DB_PATH) as db:
@@ -23,7 +23,7 @@ def _load_credentials():
         }
     db.close()
     return creds
-
+# -- Функционал кнопки по отклонению проекта совершенствования (возврат на корректировку)
 def _decline_project(id_project):
     db = sqlite3.connect(DB_PATH)
     cursor = db.cursor()
@@ -36,7 +36,7 @@ def _decline_project(id_project):
     db.commit()
     db.close()
     return "Проект направлен на корректировку!"
-
+# -- Функционал кнопки по согласованию проекта совершенствования
 def _accept_project(id_project):
     db = sqlite3.connect(DB_PATH)
     cursor = db.cursor()
@@ -48,7 +48,7 @@ def _accept_project(id_project):
     db.commit()
     db.close()
     return "Проект согласован!"
-
+# -- Функционал кнопки по согласованию проекта совершенствования
 def project_info():
     select_id = st.query_params
     db = sqlite3.connect(DB_PATH)
@@ -73,7 +73,7 @@ def project_info():
             if st.button("Отправить на корректировку"):
                 result = _decline_project(select_id)
                 st.sidebar.success(result)
-
+# -- Основная логика страницы
 def interface():
     st.set_page_config("Страница проекта", layout="wide")
     st.sidebar.title("АСУ ПС")

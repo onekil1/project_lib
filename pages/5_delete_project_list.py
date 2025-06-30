@@ -1,11 +1,13 @@
 import sqlite3
+
 import streamlit as st
 import pandas as pd
 import streamlit_authenticator as sauth
+
 from userinfo import profile_info
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
-
+# -- Загрузка пользователей + кеширование
 @st.cache_data
 def _load_credentials():
     with sqlite3.connect(DB_PATH) as db:
@@ -22,7 +24,7 @@ def _load_credentials():
         }
     db.close()
     return creds
-
+# -- Функция по удалению проекта из базы данных
 def _delete_project(select_id):
     db = sqlite3.connect(DB_PATH)
     cursor = db.cursor()
@@ -30,7 +32,7 @@ def _delete_project(select_id):
     db.commit()
     db.close()
     return "Проект удален из базы знаний"
-
+# -- Список всех проектов со всеми статусами и с кнопкой удаления
 def delete_list():
     db = sqlite3.connect(r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db")
     cursor = db.cursor()
@@ -64,8 +66,7 @@ def delete_list():
                 if st.button(f"Удалить проект",key=f"dlt_btn_{row['id']}"):
                     selected_id = row['id']
                     _delete_project(selected_id)
-
-
+# -- Основная логика страницы
 def interface():
     st.set_page_config(page_title="Удаление проектов из базы знаний", layout="wide")
     st.sidebar.title("АСУ ПС")

@@ -25,7 +25,7 @@ def _load_credentials():
         }
     db.close()
     return creds
-
+# -- Загрузка списка проектов
 def project_list():
     db = sqlite3.connect(DB_PATH)
     cursor = db.cursor()
@@ -54,7 +54,7 @@ def project_list():
                 if st.button(f"Подробнее", key=f"btn_{row['id']}"):
                     st.query_params = row['id']
                     st.switch_page("pages/4_project_page.py")
-
+# -- Основная логика страницы
 def interface():
     st.set_page_config("Список проектов", layout="wide")
     st.sidebar.title("АСУ ПС")

@@ -7,7 +7,7 @@ import streamlit_authenticator as sauth
 from userinfo import profile_info
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
-
+# -- Загрузка пользователей + кеширование
 @st.cache_data
 def _load_credentials():
     with sqlite3.connect(DB_PATH) as db:
@@ -24,7 +24,7 @@ def _load_credentials():
         }
     db.close()
     return creds
-
+# -- Загрузка списка проектов из базы данных со статусом "На проверке"
 def accept_list():
     db = sqlite3.connect(r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db")
     cursor = db.cursor()
@@ -55,7 +55,7 @@ def accept_list():
                 if st.button(f"Подробнее", key=f"btn_{row['id']}"):
                     st.query_params = row['id']
                     st.switch_page("pages/4_project_page.py")
-
+# -- Основная логика страницы
 def interface():
     st.set_page_config(page_title="Согласование проектов", layout="wide")
     st.sidebar.title("АСУ ПС")

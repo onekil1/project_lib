@@ -83,7 +83,7 @@ def interface():
         cookie_key="super_duper",
         cookie_expiry_days=1
     )
-    # -- Кнопки
+
     col1, col2, = st.sidebar.columns(2)
     if st.session_state["authentication_status"] is None:
         with col1:
@@ -92,7 +92,7 @@ def interface():
         with col2:
             if st.button("Регистрация"):
                 st.session_state.pole = "reg"
-    # -- Формы
+
     if st.session_state.pole == "login":
         authenticator.login(location="sidebar", key="login_form", fields={
                 'Form name': 'Форма ввода учетных данных',

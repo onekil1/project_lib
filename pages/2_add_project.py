@@ -7,6 +7,7 @@ from userinfo import profile_info
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
 
+# -- Загрузка пользователей + кеширование
 @st.cache_data
 def _load_credentials():
     with sqlite3.connect(DB_PATH) as db:
@@ -23,11 +24,11 @@ def _load_credentials():
         }
     db.close()
     return creds
-
+# -- Конвертирование docx в бинарный вид
 def convert_to_blob(blob_file):
     blob_data = blob_file.read()
     return blob_data
-
+# -- Загрузка введенных данных в базу данных
 def _load_info(project_name, project_simple_desc, project_status, problem, solution, plan_col_effect, plan_qol_effect, plan_money_effect, passport_file, other_file, list_stat):
     db = sqlite3.connect(r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db")
     cursor = db.cursor()
@@ -41,7 +42,7 @@ def _load_info(project_name, project_simple_desc, project_status, problem, solut
         return "Ошибка базы данных sqllite3"
     finally:
         db.close()
-
+# -- Интерфейс с полями для внесения информации
 def add_project():
     db = sqlite3.connect(r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db")
     cursor = db.cursor()
@@ -99,7 +100,7 @@ def add_project():
                     return load_result
             else:
                 return "Ошибка: Все поля должны быть заполнены"
-
+# -- Основная логика страницы
 def interface():
     st.set_page_config(page_title="Добавить проект", layout="wide")
     st.sidebar.title("АСУ ПС")
