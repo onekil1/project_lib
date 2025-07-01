@@ -4,7 +4,6 @@ import streamlit as st
 import pandas as pd
 import streamlit_authenticator as sauth
 
-from streamlit_dynamic_filters import DynamicFilters
 from userinfo import profile_info,local_css
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
