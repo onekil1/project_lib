@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import streamlit_authenticator as sauth
 
+from streamlit_dynamic_filters import DynamicFilters
 from userinfo import profile_info,local_css
 
 DB_PATH = r"C:\Users\onekil1\Coding\project_lib\database\project_lib_db.db"
@@ -25,40 +26,61 @@ def _load_credentials():
         }
     db.close()
     return creds
+# -- Сопоставление выбранных тегов с существующими тегами проектов в базе знаний
+def all_selected_tags(row_tags, selected_tags):
+    tags = [tag.strip() for tag in row_tags.split(',') if tag.strip()]
+    return all(tag in tags for tag in selected_tags)
+# -- Выгрузка всех доступных тегов из БД
+def _load_tags_from_db():
+    db = sqlite3.connect(DB_PATH)
+    cursor = db.cursor()
+    cursor.execute("SELECT tag_name FROM tags")
+    all_tags = [row[0] for row in cursor.fetchall()]
+    db.close()
+    return all_tags
 # -- Загрузка списка проектов
 def project_list():
     db = sqlite3.connect(DB_PATH)
     cursor = db.cursor()
-    cursor.execute("PRAGMA table_info(project)")
-    columns = [column[1] for column in cursor.fetchall()]
     cursor.execute("SELECT id, status, project_name, project_simple_desk, list_stat, "
                    "tags FROM project WHERE list_stat = ?", ("Согласован",))
     rows = cursor.fetchall()
-    st.write("### Список проектов")
+    db.close()
+    col0, col00 = st.columns([9, 4.5])
+    with col0:
+        st.write("### Список проектов совершенствования")
     if rows == []:
         st.info("Проекты совершенствования отсутствуют в базе данных")
-    else:
-        projects = [dict(zip(columns, row)) for row in rows]
         db.close()
-        df = pd.DataFrame(projects)
-        columns = list(df.columns)
-        columns[1], columns[2], columns[3] = columns[2],columns[3], columns[1]
-        df = df[columns]
-        for i, row in df.iterrows():
-            col1, col2, col3 = st.columns([6, 2, 1])
-            with col1:
-                st.markdown(
-                    f"**{row[columns[0]]}** — {row[columns[1]]}<br><span style='color:gray'>{row[columns[2]]}</span>",
-                    unsafe_allow_html=True
-                )
-            with col2:
-                splt = row[columns[5]].split(",")
-                for tag in splt:
-                    st.markdown(f"- {tag}")
-            with col3:
-                if st.button(f"Подробнее", key=f"btn_{row['id']}"):
-                    st.query_params = row['id']
-                    st.switch_page("pages/4_project_page.py")
+    else:
+        projects = [row for row in rows]
+        columns = ["id", "status", "project_name", "project_simple_desk", "list_stat", "tags"]
+        df = pd.DataFrame(projects, columns=columns)
+        all_tags = _load_tags_from_db()
+        with col00:
+            selected_tags = st.multiselect("Фильтр по тегам", options=all_tags, placeholder="При необходимости, выберите тег")
+        if selected_tags:
+            filtered_df = df[df['tags'].apply(lambda x: all_selected_tags(x, selected_tags))]
+        else:
+            filtered_df = df
+        if filtered_df.empty:
+            st.info("Проекты совершенствования с выбранными тегами отсутствуют")
+        else:
+            for i, row in filtered_df.iterrows():
+                col1, col2, col3 = st.columns([6, 2, 1])
+                with col1:
+                    st.markdown(
+                        f"**{row["id"]}** — {row["project_name"]}<br><span style='color:gray'>{row["project_simple_desk"]}</span>",
+                        unsafe_allow_html=True
+                    )
+                with col2:
+                    splt = row["tags"].split(",")
+                    for tag in splt:
+                        st.markdown(f"- {tag}")
+                with col3:
+                    if st.button(f"Подробнее", key=f"btn_{row[0]}"):
+                        st.query_params = row[0]
+                        st.switch_page("pages/4_project_page.py")
 # -- Основная логика страницы
 def interface():
     st.set_page_config("Список проектов", layout="wide")
